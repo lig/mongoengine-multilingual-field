@@ -43,6 +43,8 @@ class TestMultilingualStringField(unittest.TestCase):
         self.assertMultiLineEqual(doc.name, 'Hermitage')
         doc.translate('ru')
         self.assertMultiLineEqual(doc.name, u'Эрмитаж')
+        doc.translate('en')
+        self.assertMultiLineEqual(doc.name, 'Hermitage')
 
     @classmethod
     def tearDownClass(cls):

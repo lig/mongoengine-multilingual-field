@@ -2,6 +2,15 @@ from i18n_string import MultilingualString
 from mongoengine.base import BaseField
 
 
+def _translate(self, language):
+
+    for field_name, field in self._fields.items():
+
+        if isinstance(field, MultilingualStringField):
+            value = getattr(self, field_name)
+            setattr(self, field_name, value.translate(language))
+
+
 class MultilingualStringField(BaseField):
 
     def to_mongo(self, value):
@@ -19,5 +28,8 @@ class MultilingualStringField(BaseField):
         super(MultilingualStringField, self).__set__(instance, value)
 
     def __get__(self, instance, owner):
-        value = super(MultilingualStringField, self).__get__()
-        return BaseField.__get__(self, instance, owner)
+
+        if not hasattr(instance, 'translate'):
+            instance.__class__.translate = _translate
+
+        return super(MultilingualStringField, self).__get__(instance, owner)
