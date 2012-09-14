@@ -1,3 +1,5 @@
+from collections import Mapping
+
 from i18n_string import MultilingualString
 from mongoengine.base import BaseField
 
@@ -23,13 +25,21 @@ class MultilingualStringField(BaseField):
     def __set__(self, instance, value):
 
         if not isinstance(value, MultilingualString):
-            value = MultilingualString(value)
+
+            if isinstance(value, Mapping):
+                value = MultilingualString(value)
+            elif isinstance(value, basestring):
+                old_value = instance._data.get('name')
+
+                if old_value:
+                    old_value.translations[old_value.language] = value
+                    value = old_value
 
         super(MultilingualStringField, self).__set__(instance, value)
 
     def __get__(self, instance, owner):
 
         if not hasattr(instance, 'translate'):
-            instance.__class__.translate = _translate
+            owner.translate = _translate
 
         return super(MultilingualStringField, self).__get__(instance, owner)

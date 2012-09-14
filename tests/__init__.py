@@ -23,11 +23,11 @@ class TestMultilingualStringField(unittest.TestCase):
 
     def test001_save(self):
         db_doc = TestDocument._get_collection().find_one()
-        self.assertIn(
-            {u'lang': u'en_US.ISO8859-1', u'value': u'Hermitage'},
-            db_doc['name'])
-        self.assertIn(
-            {u'lang': u'ru_RU.UTF-8', u'value': u'Эрмитаж'},
+        self.assertItemsEqual(
+            [
+                {u'lang': u'en_US.ISO8859-1', u'value': u'Hermitage'},
+                {u'lang': u'ru_RU.UTF-8', u'value': u'Эрмитаж'}
+            ],
             db_doc['name'])
 
     def test002_load(self):
@@ -45,6 +45,20 @@ class TestMultilingualStringField(unittest.TestCase):
         self.assertMultiLineEqual(doc.name, u'Эрмитаж')
         doc.translate('en')
         self.assertMultiLineEqual(doc.name, 'Hermitage')
+
+    def test004_set_value(self):
+        doc = TestDocument.objects.first()
+        doc.translate('en')
+        doc.name = 'The Hermitage'
+        doc.save()
+        del doc
+        db_doc = TestDocument._get_collection().find_one()
+        self.assertItemsEqual(
+            [
+                {u'lang': u'en_US.ISO8859-1', u'value': u'The Hermitage'},
+                {u'lang': u'ru_RU.UTF-8', u'value': u'Эрмитаж'}
+            ],
+            db_doc['name'])
 
     @classmethod
     def tearDownClass(cls):
