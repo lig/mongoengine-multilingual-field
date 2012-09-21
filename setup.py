@@ -108,14 +108,14 @@ def cfg_to_args(path='setup.cfg'):
 
         if arg in MULTI_FIELDS:
             # support multiline options
-            in_cfg_value = split_multiline(in_cfg_value)
+            # Map to str values as workaround for
+            #     http://bugs.python.org/issue13943 and similar
+            in_cfg_value = map(str, split_multiline(in_cfg_value))
+            print arg, in_cfg_value
 
         kwargs[arg] = in_cfg_value
 
     return kwargs
 
-# Workaround for http://bugs.python.org/issue13943
-args = cfg_to_args()
-args.update({'packages': map(str, args['packages'])})
-
-setup(**args)
+print(cfg_to_args())
+setup(**cfg_to_args())
