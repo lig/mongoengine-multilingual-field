@@ -1,2 +1,2 @@
-i18n-string
+i18n-string>=0.2
 mongoengine

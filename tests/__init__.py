@@ -25,8 +25,8 @@ class TestMultilingualStringField(unittest.TestCase):
         db_doc = TestDocument._get_collection().find_one()
         self.assertItemsEqual(
             [
-                {u'lang': u'en_US.ISO8859-1', u'value': u'Hermitage'},
-                {u'lang': u'ru_RU.UTF-8', u'value': u'Эрмитаж'}
+                {u'lang': u'en_US', u'value': u'Hermitage'},
+                {u'lang': u'ru_RU', u'value': u'Эрмитаж'}
             ],
             db_doc['name'])
 
@@ -35,7 +35,7 @@ class TestMultilingualStringField(unittest.TestCase):
         self.assertIsInstance(doc.name, MultilingualString)
         self.assertDictEqual(
             doc.name.translations,
-            {'en_US.ISO8859-1': 'Hermitage', 'ru_RU.UTF-8': u'Эрмитаж'})
+            {'en_US': 'Hermitage', 'ru_RU': u'Эрмитаж'})
 
     def test003_translate_doc(self):
         doc = TestDocument.objects.first()
@@ -55,8 +55,8 @@ class TestMultilingualStringField(unittest.TestCase):
         db_doc = TestDocument._get_collection().find_one()
         self.assertItemsEqual(
             [
-                {u'lang': u'en_US.ISO8859-1', u'value': u'The Hermitage'},
-                {u'lang': u'ru_RU.UTF-8', u'value': u'Эрмитаж'}
+                {u'lang': u'en_US', u'value': u'The Hermitage'},
+                {u'lang': u'ru_RU', u'value': u'Эрмитаж'}
             ],
             db_doc['name'])
 
