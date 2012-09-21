@@ -60,6 +60,14 @@ class TestMultilingualStringField(unittest.TestCase):
             ],
             db_doc['name'])
 
+    def test005_value_empty_dict(self):
+        doc = TestDocument(name={})
+        doc.save()
+
+    def test006_value_none(self):
+        doc = TestDocument(name=None)
+        doc.save()
+
     @classmethod
     def tearDownClass(cls):
         cls.connection.close()
