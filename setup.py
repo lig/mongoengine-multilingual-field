@@ -111,11 +111,10 @@ def cfg_to_args(path='setup.cfg'):
             # Map to str values as workaround for
             #     http://bugs.python.org/issue13943 and similar
             in_cfg_value = map(str, split_multiline(in_cfg_value))
-            print arg, in_cfg_value
 
         kwargs[arg] = in_cfg_value
 
     return kwargs
 
-print(cfg_to_args())
+
 setup(**cfg_to_args())
