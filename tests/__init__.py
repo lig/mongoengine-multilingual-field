@@ -17,7 +17,7 @@ class TestMultilingualStringField(unittest.TestCase):
 
     def setUp(self):
         TestDocument.objects.delete()
-        doc = TestDocument(name={'en': 'Hermitage', 'ru': u'Эрмитаж'})
+        doc = TestDocument(name1={'en': 'Hermitage', 'ru': u'Эрмитаж'})
         doc.save()
         del doc
 
@@ -28,28 +28,28 @@ class TestMultilingualStringField(unittest.TestCase):
                 {u'lang': u'en_US', u'value': u'Hermitage'},
                 {u'lang': u'ru_RU', u'value': u'Эрмитаж'}
             ],
-            db_doc['name'])
+            db_doc['name1'])
 
     def test002_load(self):
         doc = TestDocument.objects.first()
-        self.assertIsInstance(doc.name, MultilingualString)
+        self.assertIsInstance(doc.name1, MultilingualString)
         self.assertDictEqual(
-            doc.name.translations,
+            doc.name1.translations,
             {'en_US': 'Hermitage', 'ru_RU': u'Эрмитаж'})
 
     def test003_translate_doc(self):
         doc = TestDocument.objects.first()
         doc.translate('en')
-        self.assertMultiLineEqual(doc.name, 'Hermitage')
+        self.assertMultiLineEqual(doc.name1, 'Hermitage')
         doc.translate('ru')
-        self.assertMultiLineEqual(doc.name, u'Эрмитаж')
+        self.assertMultiLineEqual(doc.name1, u'Эрмитаж')
         doc.translate('en')
-        self.assertMultiLineEqual(doc.name, 'Hermitage')
+        self.assertMultiLineEqual(doc.name1, 'Hermitage')
 
     def test004_set_value(self):
         doc = TestDocument.objects.first()
         doc.translate('en')
-        doc.name = 'The Hermitage'
+        doc.name1 = 'The Hermitage'
         doc.save()
         del doc
         db_doc = TestDocument._get_collection().find_one()
@@ -58,14 +58,14 @@ class TestMultilingualStringField(unittest.TestCase):
                 {u'lang': u'en_US', u'value': u'The Hermitage'},
                 {u'lang': u'ru_RU', u'value': u'Эрмитаж'}
             ],
-            db_doc['name'])
+            db_doc['name1'])
 
     def test005_value_empty_dict(self):
-        doc = TestDocument(name={})
+        doc = TestDocument(name1={})
         doc.save()
 
     def test006_value_none(self):
-        doc = TestDocument(name=None)
+        doc = TestDocument(name1=None)
         doc.save()
 
     @classmethod

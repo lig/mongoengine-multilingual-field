@@ -4,4 +4,5 @@ from multilingual_field.fields import MultilingualStringField
 
 
 class TestDocument(Document):
-    name = MultilingualStringField()
+    name1 = MultilingualStringField()
+    name2 = MultilingualStringField()
