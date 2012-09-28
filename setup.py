@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='mongoengine-multilingual-field',
-    version='0.1.3',
+    version='0.2',
     description='MongoEngine field to store MultilingualString class '
         'from i18n-string project',
     url='https://github.com/lig/mongoengine-multilingual-field',
