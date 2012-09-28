@@ -17,11 +17,11 @@ class TestMultilingualStringField(unittest.TestCase):
 
     def setUp(self):
         TestDocument.objects.delete()
+
+    def test001_save(self):
         doc = TestDocument(name1={'en': 'Hermitage', 'ru': u'Эрмитаж'})
         doc.save()
         del doc
-
-    def test001_save(self):
         db_doc = TestDocument._get_collection().find_one()
         self.assertItemsEqual(
             [
@@ -31,6 +31,9 @@ class TestMultilingualStringField(unittest.TestCase):
             db_doc['name1'])
 
     def test002_load(self):
+        doc = TestDocument(name1={'en': 'Hermitage', 'ru': u'Эрмитаж'})
+        doc.save()
+        del doc
         doc = TestDocument.objects.first()
         self.assertIsInstance(doc.name1, MultilingualString)
         self.assertDictEqual(
@@ -38,6 +41,9 @@ class TestMultilingualStringField(unittest.TestCase):
             {'en_US': 'Hermitage', 'ru_RU': u'Эрмитаж'})
 
     def test003_translate_doc(self):
+        doc = TestDocument(name1={'en': 'Hermitage', 'ru': u'Эрмитаж'})
+        doc.save()
+        del doc
         doc = TestDocument.objects.first()
         doc.translate('en')
         self.assertMultiLineEqual(doc.name1, 'Hermitage')
@@ -47,6 +53,9 @@ class TestMultilingualStringField(unittest.TestCase):
         self.assertMultiLineEqual(doc.name1, 'Hermitage')
 
     def test004_set_value(self):
+        doc = TestDocument(name1={'en': 'Hermitage', 'ru': u'Эрмитаж'})
+        doc.save()
+        del doc
         doc = TestDocument.objects.first()
         doc.translate('en')
         doc.name1 = 'The Hermitage'
@@ -63,10 +72,26 @@ class TestMultilingualStringField(unittest.TestCase):
     def test005_value_empty_dict(self):
         doc = TestDocument(name1={})
         doc.save()
+        db_doc = TestDocument._get_collection().find_one()
+        self.assertItemsEqual([], db_doc['name1'])
 
     def test006_value_none(self):
         doc = TestDocument(name1=None)
         doc.save()
+        db_doc = TestDocument._get_collection().find_one()
+        self.assertItemsEqual([], db_doc['name1'])
+
+    def test007_initial_values_are_strings(self):
+        doc = TestDocument()
+        doc.translate('en')
+        doc.name1 = 'Hermitage'
+        doc.save()
+        db_doc = TestDocument._get_collection().find_one()
+        self.assertItemsEqual(
+            [
+                {u'lang': u'en_US', u'value': u'Hermitage'},
+            ],
+            db_doc['name1'])
 
     @classmethod
     def tearDownClass(cls):

@@ -30,10 +30,9 @@ class MultilingualStringField(BaseField):
                 value = MultilingualString(value)
             elif isinstance(value, basestring):
                 old_value = instance._data.get(self.db_field)
-
-                if old_value:
-                    old_value.translations[old_value.language] = value
-                    value = old_value
+                # @todo: improve MultilingualString to handle updates
+                old_value.translations[old_value.language] = value
+                value = old_value.translate(old_value.language)
 
         super(MultilingualStringField, self).__set__(instance, value)
 
