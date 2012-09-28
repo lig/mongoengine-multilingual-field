@@ -29,7 +29,7 @@ class MultilingualStringField(BaseField):
             if isinstance(value, Mapping):
                 value = MultilingualString(value)
             elif isinstance(value, basestring):
-                old_value = instance._data.get('name')
+                old_value = instance._data.get(self.db_field)
 
                 if old_value:
                     old_value.translations[old_value.language] = value
@@ -42,4 +42,6 @@ class MultilingualStringField(BaseField):
         if not hasattr(instance, 'translate'):
             owner.translate = _translate
 
-        return super(MultilingualStringField, self).__get__(instance, owner)
+        return (
+            super(MultilingualStringField, self).__get__(instance, owner) or
+            MultilingualString())
