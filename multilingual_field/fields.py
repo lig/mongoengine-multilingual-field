@@ -1,7 +1,7 @@
 from collections import Mapping
 
 from i18n_string import MultilingualString
-from mongoengine.base import BaseField
+from mongoengine.base import BaseField, ComplexBaseField
 
 
 def _translate(self, language):
@@ -13,9 +13,11 @@ def _translate(self, language):
             setattr(self, field_name, value.translate(language))
 
 
-class MultilingualStringField(BaseField):
+class MultilingualStringField(ComplexBaseField):
 
     def to_mongo(self, value):
+        if not isinstance(value, MultilingualString):
+            return value
         return [{'lang': k, 'value': v} for k, v in value.translations.items()]
 
     def to_python(self, value):
@@ -44,3 +46,6 @@ class MultilingualStringField(BaseField):
         return (
             super(MultilingualStringField, self).__get__(instance, owner) or
             MultilingualString())
+
+    def lookup_member(self, member_name):
+        return member_name != 'S' and member_name or None
